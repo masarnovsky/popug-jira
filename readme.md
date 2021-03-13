@@ -1,5 +1,5 @@
 ## Event Storming
-![event storming](src/main/resources/static/popug-jira-event-storming.jpg)
+![event storming](common/popug-jira-event-storming.jpg)
 
 ## Model diagram
-![model diagram](src/main/resources/static/popug-jira-model-diagram.jpg)
+![model diagram](common/popug-jira-model-diagram.jpg)
