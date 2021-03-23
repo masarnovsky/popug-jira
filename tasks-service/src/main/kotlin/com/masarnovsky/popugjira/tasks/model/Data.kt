@@ -3,25 +3,26 @@ package com.masarnovsky.popugjira.tasks.model
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.LocalDateTime
 import java.util.*
 
 @Document
 data class Account(
         @Id
         val id: ObjectId = ObjectId.get(),
-        val publicId: UUID = UUID.randomUUID(),
+        val publicId: String,
         val username: String,
-        var password: String,
-        var phoneNumber: String? = null,
         val email: String,
-        var role: Role,
+        var roles: List<Role>,
+        var createdAt: LocalDateTime,
+        var updatedAt: LocalDateTime,
 )
 
 @Document
 data class Task(
         @Id
         val id: ObjectId = ObjectId.get(),
-        val publicId: UUID = UUID.randomUUID(),
+        val publicId: String = UUID.randomUUID().toString(),
         val title: String,
         var description: String,
         var status: Status = Status.OPEN,

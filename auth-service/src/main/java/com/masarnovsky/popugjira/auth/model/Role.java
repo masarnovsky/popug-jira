@@ -1,14 +1,15 @@
 package com.masarnovsky.popugjira.auth.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.bson.types.ObjectId;
+public enum Role {
+    ADMIN("ADMIN"), EMPLOYEE("EMPLOYEE"), MANAGER("MANAGER"), ACCOUNTANT("ACCOUNTANT");
 
-@Getter
-@Setter
-public class Role {
+    private final String name;
 
-    private ObjectId objectId;
-    private int roleId;
-    private String role;
+    Role(String role) {
+        this.name = role;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }

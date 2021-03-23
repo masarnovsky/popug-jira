@@ -16,9 +16,9 @@ class TaskController(
         return taskService.findAll()
     }
 
-    @GetMapping("/{id}")
-    fun findById(@PathVariable("id") id: String): Task {
-        return taskService.findByPublicId(id)
+    @GetMapping("/{publicId}")
+    fun findById(@PathVariable("publicId") publicId: String): Task {
+        return taskService.findByPublicId(publicId)
     }
 
     @PostMapping
@@ -26,7 +26,7 @@ class TaskController(
         return taskService.createTask(request)
     }
 
-    @GetMapping("/assign")
+    @PostMapping("/assign")
     fun assignTasks(): List<Task> {
         return taskService.assignTasks()
     }

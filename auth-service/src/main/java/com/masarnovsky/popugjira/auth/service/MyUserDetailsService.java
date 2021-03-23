@@ -13,38 +13,35 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
 
-    private UserService userService;
+    private final AccountService accountService;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = userService.findUserByUsername(username);
-        if (account.getRoles() == null) {
-            Role role = new Role();
-            role.setRole("ADMIN");
-            account.setRoles(Arrays.asList(role));
+        UserDetails userDetails = null;
+        Account account = accountService.findByUsername(username);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (account != null && account.getRoles() == null) {
+            account.setRoles(List.of(Role.ADMIN));
+            authorities = getUserAuthority(account.getRoles());
+            userDetails = buildUserForAuthentication(account, authorities);
         }
-        List<GrantedAuthority> authorities = getUserAuthority(account.getRoles());
 
-        UserDetails userDetails = buildUserForAuthentication(account, authorities);
-        System.out.println(userDetails);
         return userDetails;
     }
 
     private List<GrantedAuthority> getUserAuthority(List<Role> userRoles) {
         List<GrantedAuthority> roles = new ArrayList<>();
         for (Role role : userRoles) {
-            roles.add(new SimpleGrantedAuthority(role.getRole()));
+            roles.add(new SimpleGrantedAuthority(role.getName()));
         }
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>(roles);
-        return grantedAuthorities;
+        return new ArrayList<>(roles);
     }
 
     private UserDetails buildUserForAuthentication(Account account, List<GrantedAuthority> authorities) {

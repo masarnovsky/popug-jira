@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends MongoRepository<Account, ObjectId> {
+public interface AccountRepository extends MongoRepository<Account, ObjectId> {
     Account findByUsername(String username);
+    Account findByPublicId(String publicId);
 }

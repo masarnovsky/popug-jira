@@ -7,5 +7,5 @@ import java.util.*
 interface AccountRepository : MongoRepository<Account, String> {
     override fun findAll(): List<Account>
 
-    fun findByPublicId(id: UUID): Account
+    fun findByPublicId(publicId: String): Account
 }

@@ -1,7 +1,7 @@
 package com.masarnovsky.popugjira.auth.controller;
 
 import com.masarnovsky.popugjira.auth.model.Account;
-import com.masarnovsky.popugjira.auth.service.UserService;
+import com.masarnovsky.popugjira.auth.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,18 +15,17 @@ import org.springframework.web.servlet.ModelAndView;
 @AllArgsConstructor
 public class LoginController {
 
-    private UserService userService;
+    private final AccountService accountService;
 
-    @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
-    public ModelAndView login(){
+    @RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
+    public ModelAndView login() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login");
         return modelAndView;
     }
 
-
-    @RequestMapping(value="/registration", method = RequestMethod.GET)
-    public ModelAndView registration(){
+    @RequestMapping(value = "/registration", method = RequestMethod.GET)
+    public ModelAndView registration() {
         ModelAndView modelAndView = new ModelAndView();
         Account user = new Account();
         modelAndView.addObject("user", user);
@@ -37,7 +36,7 @@ public class LoginController {
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView createNewUser(Account user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
-        Account userExists = userService.findUserByUsername(user.getUsername());
+        Account userExists = accountService.findByUsername(user.getUsername());
         if (userExists != null) {
             bindingResult
                     .rejectValue("username", "error.user",
@@ -46,7 +45,7 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");
         } else {
-            Account save = userService.save(user);
+            Account save = accountService.save(user);
             modelAndView.addObject("successMessage", "User has been registered successfully");
             modelAndView.addObject("user", save);
             modelAndView.setViewName("registration");
@@ -55,13 +54,13 @@ public class LoginController {
         return modelAndView;
     }
 
-    @RequestMapping(value="/admin/home", method = RequestMethod.GET)
-    public ModelAndView home(){
+    @RequestMapping(value = "/admin/home", method = RequestMethod.GET)
+    public ModelAndView home() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Account user = userService.findUserByUsername(auth.getName());
+        Account user = accountService.findByUsername(auth.getName());
         modelAndView.addObject("userName", "Welcome " + user.getUsername());
-        modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
+        modelAndView.addObject("adminMessage", "Content Available Only for Users with Admin Role");
         modelAndView.setViewName("admin/home");
         return modelAndView;
     }
