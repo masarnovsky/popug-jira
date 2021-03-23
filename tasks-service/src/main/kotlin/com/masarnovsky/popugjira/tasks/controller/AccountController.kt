@@ -18,7 +18,7 @@ class AccountController(
 
     @PostMapping
     fun createAccount(@RequestBody request: AccountDto): Account {
-        return accountService.createAccount(request)
+        return accountService.save(request)
     }
 
     @GetMapping

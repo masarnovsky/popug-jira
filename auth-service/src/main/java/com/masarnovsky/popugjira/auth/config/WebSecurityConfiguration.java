@@ -17,7 +17,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private MyUserDetailsService userDetailsService; // todo: resolve cyclic dependency
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
