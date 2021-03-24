@@ -1,5 +1,7 @@
 package com.masarnovsky.popugjira.tasks.config
 
+import com.masarnovsky.popugjira.tasks.event.AccountCreatedEvent
+import com.masarnovsky.popugjira.tasks.event.Event
 import com.masarnovsky.popugjira.tasks.model.AccountDto
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -20,7 +22,7 @@ class KafkaConsumerConfig {
     val bootstrapAddress: String = ""
 
     @Bean
-    fun consumerFactory(): ConsumerFactory<String, AccountDto> {
+    fun consumerFactory(): ConsumerFactory<String, Event> {
         val props = mutableMapOf<String, Any>()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
         props[ConsumerConfig.GROUP_ID_CONFIG] = "accounts"
@@ -30,14 +32,37 @@ class KafkaConsumerConfig {
         return DefaultKafkaConsumerFactory(
             props as Map<String, Any>,
             StringDeserializer(),
-            JsonDeserializer(AccountDto::class.java, false)
+            JsonDeserializer(Event::class.java, false)
         )
     }
 
     @Bean
-    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, AccountDto> {
-        val factory = ConcurrentKafkaListenerContainerFactory<String, AccountDto>()
+    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Event> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, Event>()
         factory.consumerFactory = consumerFactory()
+
+        return factory
+    }
+
+    @Bean
+    fun accountCreatedEventConsumerFactory(): ConsumerFactory<String, AccountCreatedEvent> {
+        val props = mutableMapOf<String, Any>()
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
+        props[ConsumerConfig.GROUP_ID_CONFIG] = "accounts"
+        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
+        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java.name
+
+        return DefaultKafkaConsumerFactory(
+            props as Map<String, Any>,
+            StringDeserializer(),
+            JsonDeserializer(AccountCreatedEvent::class.java, false)
+        )
+    }
+
+    @Bean
+    fun kafkaAccountCreatedEventListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, AccountCreatedEvent> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, AccountCreatedEvent>()
+        factory.consumerFactory = accountCreatedEventConsumerFactory()
 
         return factory
     }

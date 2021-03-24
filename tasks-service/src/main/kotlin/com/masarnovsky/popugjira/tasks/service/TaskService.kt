@@ -1,8 +1,10 @@
 package com.masarnovsky.popugjira.tasks.service
 
-import com.masarnovsky.popugjira.tasks.model.Status
-import com.masarnovsky.popugjira.tasks.model.Task
-import com.masarnovsky.popugjira.tasks.model.TaskDto
+import com.masarnovsky.popugjira.tasks.event.Event
+import com.masarnovsky.popugjira.tasks.event.TaskAssignedEvent
+import com.masarnovsky.popugjira.tasks.event.TaskClosedEvent
+import com.masarnovsky.popugjira.tasks.event.TaskCreatedEvent
+import com.masarnovsky.popugjira.tasks.model.*
 import com.masarnovsky.popugjira.tasks.repository.TaskRepository
 import mu.KotlinLogging
 import org.bson.types.ObjectId
@@ -12,14 +14,14 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 private val LOGGER = KotlinLogging.logger {}
-private val TASKS_TOPIC = "tasks"
-private val TASKS_STREAM_TOPIC = "tasks-stream"
+private const val TASKS_TOPIC = "tasks"
+private const val TASKS_STREAM_TOPIC = "tasks-stream"
 
 @Service
 class TaskService(
     private val taskRepository: TaskRepository,
     private val accountService: AccountService,
-    private val kafkaTemplate: KafkaTemplate<String, Task>,
+    private val kafkaTemplate: KafkaTemplate<String, Event>,
 ) {
 
     fun findAll(): List<Task> {
@@ -38,8 +40,10 @@ class TaskService(
     fun createTask(dto: TaskDto): Task {
         val newTask = taskRepository.save(Task(title = dto.title, description = dto.description))
 
-        LOGGER.info { "new task was produced => $newTask" }
-        kafkaTemplate.send(TASKS_STREAM_TOPIC, newTask)
+        val event = TaskCreatedEvent(task = newTask)
+        kafkaTemplate.send(TASKS_STREAM_TOPIC, event)
+        kafkaTemplate.send(TASKS_TOPIC, event)
+        LOGGER.info { "${event.name} was produced => ${event.task}" }
 
         return newTask
     }
@@ -53,8 +57,9 @@ class TaskService(
             it.account = accounts.random()
             it.status = Status.ASSIGNED
 
-//            kafkaTemplate.send(TASKS_TOPIC, TaskAssignedEvent(TaskAssigned(it.publicId, it.account.publicId)))
-            LOGGER.info { "Task ${it.publicId} was assigned to ${it.account!!.publicId}" }
+            val event = TaskAssignedEvent(TaskAssigned(it.publicId, it.account!!.publicId))
+            kafkaTemplate.send(TASKS_TOPIC, event)
+            LOGGER.info { "${event.name} was produced => ${event.task}" }
         }
 
         return taskRepository.saveAll(tasksForAssignment)
@@ -66,13 +71,10 @@ class TaskService(
         task.status = Status.CLOSED
         val updatedTask = taskRepository.save(task)
 
-//        kafkaTemplate.send(TASKS_TOPIC, TaskClosedEvent(task))
-        LOGGER.info { "Task ${task.publicId} was closed" }
+        val event = TaskClosedEvent(TaskClosed(updatedTask.publicId))
+        kafkaTemplate.send(TASKS_TOPIC, event)
+        LOGGER.info { "${event.name} was produced => ${event.task}" }
 
         return updatedTask
-    }
-
-    fun clear() {
-        taskRepository.deleteAll()
     }
 }

@@ -1,5 +1,6 @@
 package com.masarnovsky.popugjira.tasks.config
 
+import com.masarnovsky.popugjira.tasks.event.Event
 import com.masarnovsky.popugjira.tasks.model.Task
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -19,7 +20,7 @@ class KafkaProducerConfig {
     val bootstrapAddress: String = ""
 
     @Bean
-    fun producerFactory(): ProducerFactory<String, Task> {
+    fun producerFactory(): ProducerFactory<String, Event> {
         val props = mutableMapOf<String, String>()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java.name
@@ -29,7 +30,7 @@ class KafkaProducerConfig {
     }
 
     @Bean
-    fun kafkaTemplate(): KafkaTemplate<String, Task> {
+    fun kafkaTemplate(): KafkaTemplate<String, Event> {
         return KafkaTemplate(producerFactory())
     }
 }

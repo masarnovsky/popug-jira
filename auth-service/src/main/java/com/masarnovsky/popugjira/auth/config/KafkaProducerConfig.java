@@ -1,5 +1,6 @@
 package com.masarnovsky.popugjira.auth.config;
 
+import com.masarnovsky.popugjira.auth.event.Event;
 import com.masarnovsky.popugjira.auth.model.Account;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -21,7 +22,7 @@ public class KafkaProducerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ProducerFactory<String, Account> producerFactory() {
+    public ProducerFactory<String, Event> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -36,7 +37,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, Account> kafkaTemplate() {
+    public KafkaTemplate<String, Event> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 }

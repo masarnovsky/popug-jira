@@ -1,5 +1,7 @@
 package com.masarnovsky.popugjira.auth.service;
 
+import com.masarnovsky.popugjira.auth.event.AccountCreatedEvent;
+import com.masarnovsky.popugjira.auth.event.Event;
 import com.masarnovsky.popugjira.auth.model.Account;
 import com.masarnovsky.popugjira.auth.model.Role;
 import com.masarnovsky.popugjira.auth.repository.AccountRepository;
@@ -22,7 +24,7 @@ public class AccountService {
     private static final String ACCOUNTS_STREAM_TOPIC = "accounts-stream";
 
     private final AccountRepository repository;
-    private final KafkaTemplate<String, Account> kafkaTemplate;
+    private final KafkaTemplate<String, Event> kafkaTemplate;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Account save(Account account) {
@@ -35,8 +37,9 @@ public class AccountService {
 
         Account newAccount = repository.save(account);
 
-        kafkaTemplate.send(ACCOUNTS_STREAM_TOPIC, newAccount);
-        LOGGER.info("New account was produced => {}", newAccount);
+        AccountCreatedEvent event = new AccountCreatedEvent(account);
+        kafkaTemplate.send(ACCOUNTS_STREAM_TOPIC, event);
+        LOGGER.info("{} was produced => {}", event.getName(), event.getAccount());
 
         return newAccount;
     }
