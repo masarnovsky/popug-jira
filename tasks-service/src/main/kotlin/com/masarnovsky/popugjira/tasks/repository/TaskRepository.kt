@@ -9,7 +9,7 @@ import java.util.*
 interface TaskRepository : MongoRepository<Task, String> {
     fun findById(id: ObjectId): Task
 
-    fun findByPublicId(id: UUID): Task
+    fun findByPublicId(id: String): Task
 
     fun findAllByStatusIn(statuses: List<Status>): List<Task>
 }

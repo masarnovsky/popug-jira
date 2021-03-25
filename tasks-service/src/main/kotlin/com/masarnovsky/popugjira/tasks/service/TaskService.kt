@@ -1,5 +1,9 @@
 package com.masarnovsky.popugjira.tasks.service
 
+import com.masarnovsky.popugjira.tasks.TASKS_STREAM_TOPIC
+import com.masarnovsky.popugjira.tasks.TASK_ASSIGNED_TOPIC
+import com.masarnovsky.popugjira.tasks.TASK_CLOSED_TOPIC
+import com.masarnovsky.popugjira.tasks.TASK_CREATED_TOPIC
 import com.masarnovsky.popugjira.tasks.event.Event
 import com.masarnovsky.popugjira.tasks.event.TaskAssignedEvent
 import com.masarnovsky.popugjira.tasks.event.TaskClosedEvent
@@ -14,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 private val LOGGER = KotlinLogging.logger {}
-private const val TASKS_TOPIC = "tasks"
-private const val TASKS_STREAM_TOPIC = "tasks-stream"
 
 @Service
 class TaskService(
@@ -33,7 +35,7 @@ class TaskService(
     }
 
     fun findByPublicId(id: String): Task {
-        return taskRepository.findByPublicId(UUID.fromString(id))
+        return taskRepository.findByPublicId(id)
     }
 
     @Transactional
@@ -42,7 +44,7 @@ class TaskService(
 
         val event = TaskCreatedEvent(task = newTask)
         kafkaTemplate.send(TASKS_STREAM_TOPIC, event)
-        kafkaTemplate.send(TASKS_TOPIC, event)
+        kafkaTemplate.send(TASK_CREATED_TOPIC, event)
         LOGGER.info { "${event.name} was produced => ${event.task}" }
 
         return newTask
@@ -58,7 +60,7 @@ class TaskService(
             it.status = Status.ASSIGNED
 
             val event = TaskAssignedEvent(TaskAssigned(it.publicId, it.account!!.publicId))
-            kafkaTemplate.send(TASKS_TOPIC, event)
+            kafkaTemplate.send(TASK_ASSIGNED_TOPIC, event)
             LOGGER.info { "${event.name} was produced => ${event.task}" }
         }
 
@@ -67,12 +69,12 @@ class TaskService(
 
     @Transactional
     fun closeTask(id: String): Task {
-        val task = taskRepository.findById(ObjectId(id))
+        val task = taskRepository.findByPublicId(id)
         task.status = Status.CLOSED
         val updatedTask = taskRepository.save(task)
 
-        val event = TaskClosedEvent(TaskClosed(updatedTask.publicId))
-        kafkaTemplate.send(TASKS_TOPIC, event)
+        val event = TaskClosedEvent(TaskClosed(updatedTask.publicId, task.account!!.publicId))
+        kafkaTemplate.send(TASK_CLOSED_TOPIC, event)
         LOGGER.info { "${event.name} was produced => ${event.task}" }
 
         return updatedTask

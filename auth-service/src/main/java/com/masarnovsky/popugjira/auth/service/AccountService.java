@@ -22,12 +22,18 @@ import java.util.UUID;
 public class AccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
     private static final String ACCOUNTS_STREAM_TOPIC = "accounts-stream";
+    private static final String ACCOUNT_CREATED_TOPIC = "account-created";
 
     private final AccountRepository repository;
     private final KafkaTemplate<String, Event> kafkaTemplate;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Account save(Account account) {
+
+        if ("admin".equals(account.getUsername())) account.setRoles(List.of(Role.ADMIN));
+        if ("accountant".equals(account.getUsername())) account.setRoles(List.of(Role.ACCOUNTANT));
+        if ("manager".equals(account.getUsername())) account.setRoles(List.of(Role.MANAGER));
+
         account.setObjectId(new ObjectId());
         account.setPublicId(UUID.randomUUID().toString());
         account.setPassword(bCryptPasswordEncoder.encode(account.getPassword()));

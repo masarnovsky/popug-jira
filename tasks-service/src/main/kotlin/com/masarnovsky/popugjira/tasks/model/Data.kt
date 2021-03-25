@@ -14,7 +14,7 @@ data class Account(
         val username: String,
         val email: String,
         var roles: List<Role>,
-        var createdAt: LocalDateTime,
+        val createdAt: LocalDateTime,
         var updatedAt: LocalDateTime,
 )
 
@@ -23,10 +23,12 @@ data class Task(
         @Id
         val id: ObjectId = ObjectId.get(),
         val publicId: String = UUID.randomUUID().toString(),
-        val title: String,
+        var title: String,
         var description: String,
         var status: Status = Status.OPEN,
         var account: Account? = null,
+        val createdAt: LocalDateTime = LocalDateTime.now(),
+        var updatedAt: LocalDateTime = LocalDateTime.now(),
 )
 
 enum class Status {
