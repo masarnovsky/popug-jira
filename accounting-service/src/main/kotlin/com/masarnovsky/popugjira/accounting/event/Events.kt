@@ -1,12 +1,12 @@
-package com.masarnovsky.popugjira.tasks.event
+package com.masarnovsky.popugjira.accounting.event
 
-import com.masarnovsky.popugjira.tasks.model.AccountDto
-import com.masarnovsky.popugjira.tasks.model.Task
-import com.masarnovsky.popugjira.tasks.model.TaskAssigned
-import com.masarnovsky.popugjira.tasks.model.TaskClosed
+import com.masarnovsky.popugjira.accounting.model.AccountDto
+import com.masarnovsky.popugjira.accounting.model.TaskCreated
+import com.masarnovsky.popugjira.accounting.model.TaskAssigned
+import com.masarnovsky.popugjira.accounting.model.TaskClosed
 
-class TaskCreatedEvent(name: String, service: String, val task: Task) : Event("TaskCreated", service) {
-    constructor(service: String, task: Task) : this("TaskCreated", service, task)
+class TaskCreatedEvent(name: String, service: String, val taskCreated: TaskCreated) : Event("TaskCreated", service) {
+    constructor(service: String, taskCreated: TaskCreated) : this("TaskCreated", service, taskCreated)
 }
 
 class TaskClosedEvent(name: String, service: String, val task: TaskClosed) : Event("TaskClosed", service) {
@@ -18,5 +18,6 @@ class TaskAssignedEvent(name: String, service: String, val task: TaskAssigned) :
 }
 
 class AccountCreatedEvent(name: String, service: String, val account: AccountDto) : Event("AccountCreated", service)
+
 
 open class Event(val name: String, val service: String)

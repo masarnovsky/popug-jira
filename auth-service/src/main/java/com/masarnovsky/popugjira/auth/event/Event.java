@@ -6,10 +6,11 @@ import lombok.ToString;
 @Getter
 @ToString
 public abstract class Event {
-    private String name;
-    // todo: add some useful information: createdAt, topic name etc.
+    private final String name;
+    private final String service;
 
-    public Event(String name) {
+    public Event(String name, String service) {
         this.name = name;
+        this.service = service;
     }
 }

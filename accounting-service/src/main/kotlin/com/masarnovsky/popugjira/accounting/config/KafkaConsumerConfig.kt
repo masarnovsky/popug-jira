@@ -1,9 +1,11 @@
-package com.masarnovsky.popugjira.tasks.config
+package com.masarnovsky.popugjira.accounting.config
 
-import com.masarnovsky.popugjira.tasks.ACCOUNTS_GROUP_ID
-import com.masarnovsky.popugjira.tasks.TASKS_GROUP_ID
-import com.masarnovsky.popugjira.tasks.event.AccountCreatedEvent
-import com.masarnovsky.popugjira.tasks.event.TaskAssignedEvent
+import com.masarnovsky.popugjira.accounting.ACCOUNTS_GROUP_ID
+import com.masarnovsky.popugjira.accounting.TASKS_GROUP_ID
+import com.masarnovsky.popugjira.accounting.event.AccountCreatedEvent
+import com.masarnovsky.popugjira.accounting.event.TaskAssignedEvent
+import com.masarnovsky.popugjira.accounting.event.TaskClosedEvent
+import com.masarnovsky.popugjira.accounting.event.TaskCreatedEvent
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
@@ -46,9 +48,25 @@ class KafkaConsumerConfig {
     }
 
     @Bean
+    fun kafkaTaskClosedEventListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, TaskClosedEvent> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, TaskClosedEvent>()
+        factory.consumerFactory = consumerFactory(TASKS_GROUP_ID, TaskClosedEvent::class.java)
+
+        return factory
+    }
+
+    @Bean
     fun kafkaTaskAssignedEventListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, TaskAssignedEvent> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, TaskAssignedEvent>()
         factory.consumerFactory = consumerFactory(TASKS_GROUP_ID, TaskAssignedEvent::class.java)
+
+        return factory
+    }
+
+    @Bean
+    fun kafkaTaskCreatedEventListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, TaskCreatedEvent> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, TaskCreatedEvent>()
+        factory.consumerFactory = consumerFactory(TASKS_GROUP_ID, TaskCreatedEvent::class.java)
 
         return factory
     }

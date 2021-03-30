@@ -17,12 +17,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.masarnovsky.popugjira.auth.Constants.ACCOUNTS_STREAM_TOPIC;
+import static com.masarnovsky.popugjira.auth.Constants.SERVICE_NAME;
+
 @Service
 @AllArgsConstructor
 public class AccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
-    private static final String ACCOUNTS_STREAM_TOPIC = "accounts-stream";
-    private static final String ACCOUNT_CREATED_TOPIC = "account-created";
 
     private final AccountRepository repository;
     private final KafkaTemplate<String, Event> kafkaTemplate;
@@ -43,9 +44,9 @@ public class AccountService {
 
         Account newAccount = repository.save(account);
 
-        AccountCreatedEvent event = new AccountCreatedEvent(account);
+        AccountCreatedEvent event = new AccountCreatedEvent(SERVICE_NAME, account);
         kafkaTemplate.send(ACCOUNTS_STREAM_TOPIC, event);
-        LOGGER.info("{} was produced => {}", event.getName(), event.getAccount());
+        LOGGER.info("{} was produced in {} => {}", event.getName(), SERVICE_NAME, event.getAccount());
 
         return newAccount;
     }

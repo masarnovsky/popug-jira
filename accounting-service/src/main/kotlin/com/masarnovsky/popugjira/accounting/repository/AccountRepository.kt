@@ -1,6 +1,6 @@
-package com.masarnovsky.popugjira.tasks.repository
+package com.masarnovsky.popugjira.accounting.repository
 
-import com.masarnovsky.popugjira.tasks.model.Account
+import com.masarnovsky.popugjira.accounting.model.Account
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface AccountRepository : MongoRepository<Account, String> {

@@ -1,10 +1,10 @@
-package com.masarnovsky.popugjira.tasks
+package com.masarnovsky.popugjira.accounting
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TasksServiceApplicationTests {
+class AccountingServiceApplicationTests {
 
 	@Test
 	fun contextLoads() {

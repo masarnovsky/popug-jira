@@ -1,7 +1,7 @@
-package com.masarnovsky.popugjira.tasks.repository
+package com.masarnovsky.popugjira.accounting.repository
 
-import com.masarnovsky.popugjira.tasks.model.Status
-import com.masarnovsky.popugjira.tasks.model.Task
+import com.masarnovsky.popugjira.accounting.model.Status
+import com.masarnovsky.popugjira.accounting.model.Task
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.repository.MongoRepository
 
