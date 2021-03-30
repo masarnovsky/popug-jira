@@ -6,11 +6,11 @@ import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
-public class AccountCreatedEvent extends Event{
+public class AccountCreatedEvent extends Event {
     private Account account;
 
-    public AccountCreatedEvent(Account account) {
-        super("AccountCreated");
+    public AccountCreatedEvent(String service, Account account) {
+        super(service, "AccountCreated");
         this.account = account;
     }
 }

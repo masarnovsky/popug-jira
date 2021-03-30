@@ -15,6 +15,7 @@ data class TaskAssigned(
 
 data class TaskClosed(
     val taskPublicId: String,
+    val accountPublicId: String,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)

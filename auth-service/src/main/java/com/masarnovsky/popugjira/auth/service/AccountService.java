@@ -17,17 +17,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.masarnovsky.popugjira.auth.Constants.ACCOUNTS_STREAM_TOPIC;
+import static com.masarnovsky.popugjira.auth.Constants.SERVICE_NAME;
+
 @Service
 @AllArgsConstructor
 public class AccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
-    private static final String ACCOUNTS_STREAM_TOPIC = "accounts-stream";
 
     private final AccountRepository repository;
     private final KafkaTemplate<String, Event> kafkaTemplate;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Account save(Account account) {
+
+        if ("admin".equals(account.getUsername())) account.setRoles(List.of(Role.ADMIN));
+        if ("accountant".equals(account.getUsername())) account.setRoles(List.of(Role.ACCOUNTANT));
+        if ("manager".equals(account.getUsername())) account.setRoles(List.of(Role.MANAGER));
+
         account.setObjectId(new ObjectId());
         account.setPublicId(UUID.randomUUID().toString());
         account.setPassword(bCryptPasswordEncoder.encode(account.getPassword()));
@@ -37,9 +44,9 @@ public class AccountService {
 
         Account newAccount = repository.save(account);
 
-        AccountCreatedEvent event = new AccountCreatedEvent(account);
+        AccountCreatedEvent event = new AccountCreatedEvent(SERVICE_NAME, account);
         kafkaTemplate.send(ACCOUNTS_STREAM_TOPIC, event);
-        LOGGER.info("{} was produced => {}", event.getName(), event.getAccount());
+        LOGGER.info("{} was produced in {} => {}", event.getName(), SERVICE_NAME, event.getAccount());
 
         return newAccount;
     }

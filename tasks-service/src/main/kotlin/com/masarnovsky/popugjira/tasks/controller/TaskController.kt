@@ -21,6 +21,11 @@ class TaskController(
         return taskService.findByPublicId(publicId)
     }
 
+    @PostMapping("/{publicId}/close")
+    fun close(@PathVariable("publicId") publicId: String): Task {
+        return taskService.closeTask(publicId)
+    }
+
     @PostMapping
     fun createTask(@RequestBody request: TaskDto): Task {
         return taskService.createTask(request)
@@ -29,10 +34,5 @@ class TaskController(
     @PostMapping("/assign")
     fun assignTasks(): List<Task> {
         return taskService.assignTasks()
-    }
-
-    @DeleteMapping
-    fun clear() {
-        taskService.clear()
     }
 }
