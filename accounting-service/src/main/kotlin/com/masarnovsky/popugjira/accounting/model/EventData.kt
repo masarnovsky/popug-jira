@@ -3,6 +3,7 @@ package com.masarnovsky.popugjira.accounting.model
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalDateTime
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class TaskCreated(
     val publicId: String,
     var title: String,

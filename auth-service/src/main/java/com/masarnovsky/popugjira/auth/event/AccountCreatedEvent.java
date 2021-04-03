@@ -10,7 +10,7 @@ public class AccountCreatedEvent extends Event {
     private Account account;
 
     public AccountCreatedEvent(String service, Account account) {
-        super(service, "AccountCreated");
+        super("AccountCreated", service);
         this.account = account;
     }
 }

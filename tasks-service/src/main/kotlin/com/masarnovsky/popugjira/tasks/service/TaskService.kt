@@ -44,7 +44,6 @@ class TaskService(
 
         val event = TaskCreatedEvent(service = SERVICE_NAME, task = newTask)
         kafkaTemplate.send(TASKS_STREAM_TOPIC, event)
-        kafkaTemplate.send(TASK_CREATED_TOPIC, event)
         LOGGER.info { "${event.name} was produced in ${event.service} => ${event.task}" }
 
         return newTask

@@ -5,8 +5,8 @@ import com.masarnovsky.popugjira.accounting.model.TaskCreated
 import com.masarnovsky.popugjira.accounting.model.TaskAssigned
 import com.masarnovsky.popugjira.accounting.model.TaskClosed
 
-class TaskCreatedEvent(name: String, service: String, val taskCreated: TaskCreated) : Event("TaskCreated", service) {
-    constructor(service: String, taskCreated: TaskCreated) : this("TaskCreated", service, taskCreated)
+class TaskCreatedEvent(name: String, service: String, val task: TaskCreated) : Event("TaskCreated", service) {
+    constructor(service: String, task: TaskCreated) : this("TaskCreated", service, task)
 }
 
 class TaskClosedEvent(name: String, service: String, val task: TaskClosed) : Event("TaskClosed", service) {

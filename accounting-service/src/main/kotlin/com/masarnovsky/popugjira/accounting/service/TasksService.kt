@@ -20,6 +20,7 @@ class TasksService(
 
     fun setPriceAndSave(taskCreated: TaskCreated): Task {
         val price = BigDecimal(Random.nextInt(NEW_TASK_MIN_PRICE, NEW_TASK_MAX_PRICE))
+        // send to kafka setPriceEvent (CUD)
         val task = Task(
             publicId = taskCreated.publicId, title = taskCreated.title, price = price,
             description = taskCreated.description, createdAt = taskCreated.createdAt, updatedAt = taskCreated.updatedAt
