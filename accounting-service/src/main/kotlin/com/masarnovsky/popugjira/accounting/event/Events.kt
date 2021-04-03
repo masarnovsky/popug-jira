@@ -14,7 +14,7 @@ class TaskClosedEvent(name: String, service: String, val task: TaskClosed) : Eve
 }
 
 class TaskAssignedEvent(name: String, service: String, val task: TaskAssigned) : Event("TaskAssigned", service) {
-    constructor(service: String, taskAssigned: TaskAssigned) : this("TaskAssigned", service, taskAssigned)
+    constructor(service: String, task: TaskAssigned) : this("TaskAssigned", service, task)
 }
 
 class AccountCreatedEvent(name: String, service: String, val account: AccountDto) : Event("AccountCreated", service)
