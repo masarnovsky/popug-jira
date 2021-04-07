@@ -1,6 +1,6 @@
-package com.masarnovsky.popugjira.accounting.event
+package com.masarnovsky.popugjira.analytics.event
 
-import com.masarnovsky.popugjira.accounting.model.*
+import com.masarnovsky.popugjira.analytics.model.*
 
 class TaskCreatedEvent(name: String, service: String, val task: TaskCreated) : Event("TaskCreated", service) {
     constructor(service: String, task: TaskCreated) : this("TaskCreated", service, task)
@@ -16,13 +16,13 @@ class TaskAssignedEvent(name: String, service: String, val task: TaskAssigned) :
 
 class AccountCreatedEvent(name: String, service: String, val account: AccountDto) : Event("AccountCreated", service)
 
-class PayoutCreated(name: String, service: String, val payout: PayoutDto) : Event("PayoutCreated", service) {
+class PayoutCreatedEvent(name: String, service: String, val payout: PayoutDto) : Event("PayoutCreated", service) {
     constructor(service: String, payout: PayoutDto) : this("PayoutCreated", service, payout)
 }
 
-class TransactionCreated(name: String, service: String, val transaction: Transaction) :
+class TransactionCreatedEvent(name: String, service: String, val transaction: TransactionDto) :
     Event("TransactionCreated", service) {
-    constructor(service: String, transaction: Transaction) : this("TransactionCreated", service, transaction)
+    constructor(service: String, transaction: TransactionDto) : this("TransactionCreated", service, transaction)
 }
 
 open class Event(val name: String, val service: String)

@@ -1,7 +1,7 @@
-package com.masarnovsky.popugjira.accounting
+package com.masarnovsky.popugjira.analytics
 
-const val SERVICE_NAME = "accounting-service"
-const val ACCOUNTING_GROUP_ID = "accounting"
+const val SERVICE_NAME = "analytics-service"
+const val ACCOUNTING_GROUP_ID = "analytics"
 
 const val TASKS_GROUP_ID = "tasks"
 const val TASK_CREATED_TOPIC = "task-created"
@@ -13,8 +13,3 @@ const val ACCOUNTS_STREAM_TOPIC = "accounts-stream"
 
 const val PAYOUT_CREATED = "payout-created"
 const val TRANSACTION_CREATED = "transaction-created"
-
-const val NEW_TASK_MIN_PRICE = 20
-const val NEW_TASK_MAX_PRICE = 80
-
-const val CLOSED_TASK_COEFFICIENT = 1.5

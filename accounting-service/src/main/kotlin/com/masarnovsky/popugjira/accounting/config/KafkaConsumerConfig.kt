@@ -1,10 +1,7 @@
 package com.masarnovsky.popugjira.accounting.config
 
 import com.masarnovsky.popugjira.accounting.ACCOUNTING_GROUP_ID
-import com.masarnovsky.popugjira.accounting.event.AccountCreatedEvent
-import com.masarnovsky.popugjira.accounting.event.TaskAssignedEvent
-import com.masarnovsky.popugjira.accounting.event.TaskClosedEvent
-import com.masarnovsky.popugjira.accounting.event.TaskCreatedEvent
+import com.masarnovsky.popugjira.accounting.event.*
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
@@ -111,6 +108,29 @@ class KafkaConsumerConfig {
     fun kafkaAccountCreatedEventListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, AccountCreatedEvent> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, AccountCreatedEvent>()
         factory.consumerFactory = accountConsumerFactory()
+
+        return factory
+    }
+
+    @Bean
+    fun payoutCreatedConsumerFactory(): ConsumerFactory<String, PayoutCreated> {
+        val props = mutableMapOf<String, Any>()
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
+        props[ConsumerConfig.GROUP_ID_CONFIG] = ACCOUNTING_GROUP_ID
+        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
+        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java.name
+
+        return DefaultKafkaConsumerFactory(
+            props as Map<String, Any>,
+            StringDeserializer(),
+            JsonDeserializer(PayoutCreated::class.java, false)
+        )
+    }
+
+    @Bean
+    fun kafkaPayoutCreatedEventListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, PayoutCreated> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, PayoutCreated>()
+        factory.consumerFactory = payoutCreatedConsumerFactory()
 
         return factory
     }

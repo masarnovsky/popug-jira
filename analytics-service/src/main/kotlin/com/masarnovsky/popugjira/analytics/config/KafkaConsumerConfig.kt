@@ -1,14 +1,15 @@
-package com.masarnovsky.popugjira.tasks.config
+package com.masarnovsky.popugjira.analytics.config
 
-import com.masarnovsky.popugjira.tasks.TASKS_GROUP_ID
-import com.masarnovsky.popugjira.tasks.event.AccountCreatedEvent
-import com.masarnovsky.popugjira.tasks.event.TaskAssignedEvent
+import com.masarnovsky.popugjira.analytics.ACCOUNTING_GROUP_ID
+import com.masarnovsky.popugjira.analytics.event.AccountCreatedEvent
+import com.masarnovsky.popugjira.analytics.event.TransactionCreatedEvent
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
+import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
@@ -25,7 +26,7 @@ class KafkaConsumerConfig {
     fun accountStreamConsumerFactory(): ConsumerFactory<String, AccountCreatedEvent> {
         val props = mutableMapOf<String, Any>()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
-        props[ConsumerConfig.GROUP_ID_CONFIG] = TASKS_GROUP_ID
+        props[ConsumerConfig.GROUP_ID_CONFIG] = ACCOUNTING_GROUP_ID
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java.name
 
@@ -33,21 +34,6 @@ class KafkaConsumerConfig {
             props as Map<String, Any>,
             StringDeserializer(),
             JsonDeserializer(AccountCreatedEvent::class.java, false)
-        )
-    }
-
-    @Bean
-    fun taskAssignedConsumerFactory(): ConsumerFactory<String, TaskAssignedEvent> {
-        val props = mutableMapOf<String, Any>()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
-        props[ConsumerConfig.GROUP_ID_CONFIG] = TASKS_GROUP_ID
-        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
-        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java.name
-
-        return DefaultKafkaConsumerFactory(
-            props as Map<String, Any>,
-            StringDeserializer(),
-            JsonDeserializer(TaskAssignedEvent::class.java, false)
         )
     }
 
@@ -60,10 +46,18 @@ class KafkaConsumerConfig {
     }
 
     @Bean
-    fun kafkaTaskAssignedEventListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, TaskAssignedEvent> {
-        val factory = ConcurrentKafkaListenerContainerFactory<String, TaskAssignedEvent>()
-        factory.consumerFactory = taskAssignedConsumerFactory()
+    fun transactionCreatedConsumerFactory(): ConsumerFactory<String, TransactionCreatedEvent> {
+        val props = mutableMapOf<String, Any>()
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
+        props[ConsumerConfig.GROUP_ID_CONFIG] = ACCOUNTING_GROUP_ID
+        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
+        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java.name
 
-        return factory
+        return DefaultKafkaConsumerFactory(
+            props as Map<String, Any>,
+            StringDeserializer(),
+            JsonDeserializer(TransactionCreatedEvent::class.java, false)
+        )
     }
+
 }

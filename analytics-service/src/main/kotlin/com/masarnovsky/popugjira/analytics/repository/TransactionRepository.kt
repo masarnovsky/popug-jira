@@ -1,6 +1,6 @@
-package com.masarnovsky.popugjira.accounting.repository
+package com.masarnovsky.popugjira.analytics.repository
 
-import com.masarnovsky.popugjira.accounting.model.Transaction
+import com.masarnovsky.popugjira.analytics.model.Transaction
 import org.springframework.data.mongodb.repository.MongoRepository
 import java.time.LocalDateTime
 
