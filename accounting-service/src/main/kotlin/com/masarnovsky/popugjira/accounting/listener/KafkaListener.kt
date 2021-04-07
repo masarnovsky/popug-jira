@@ -1,13 +1,7 @@
 package com.masarnovsky.popugjira.accounting.listener
 
-import com.masarnovsky.popugjira.accounting.ACCOUNTS_STREAM_TOPIC
-import com.masarnovsky.popugjira.accounting.TASKS_STREAM_TOPIC
-import com.masarnovsky.popugjira.accounting.TASK_ASSIGNED_TOPIC
-import com.masarnovsky.popugjira.accounting.TASK_CLOSED_TOPIC
-import com.masarnovsky.popugjira.accounting.event.AccountCreatedEvent
-import com.masarnovsky.popugjira.accounting.event.TaskAssignedEvent
-import com.masarnovsky.popugjira.accounting.event.TaskClosedEvent
-import com.masarnovsky.popugjira.accounting.event.TaskCreatedEvent
+import com.masarnovsky.popugjira.accounting.*
+import com.masarnovsky.popugjira.accounting.event.*
 import com.masarnovsky.popugjira.accounting.service.AccountService
 import com.masarnovsky.popugjira.accounting.service.NotificationService
 import com.masarnovsky.popugjira.accounting.service.TasksService
@@ -61,5 +55,14 @@ class KafkaListener(
     fun listenTaskClosedTopic(event: TaskClosedEvent) {
         LOGGER.info { "=> event ${event.name} was consumed from ${event.service} with data: ${event.task}" }
         transactionService.debtFunds(event.task)
+    }
+
+    @KafkaListener(
+        topics = [PAYOUT_CREATED],
+        containerFactory = "kafkaPayoutCreatedEventListenerContainerFactory"
+    )
+    fun listenPayoutCreatedTopic(event: PayoutCreated) {
+        LOGGER.info { "=> event ${event.name} was consumed from ${event.service} with data: ${event.payout}" }
+        notificationService.sendNotification(event.payout.accountPublicId, "Hi, we sent you ${event.payout.funds}$!")
     }
 }

@@ -11,6 +11,8 @@ const val TASKS_STREAM_TOPIC = "tasks-stream"
 
 const val ACCOUNTS_STREAM_TOPIC = "accounts-stream"
 
+const val PAYOUT_CREATED = "payout-created"
+
 const val NEW_TASK_MIN_PRICE = 20
 const val NEW_TASK_MAX_PRICE = 80
 
