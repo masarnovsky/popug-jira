@@ -1,7 +1,6 @@
 package com.masarnovsky.popugjira.analytics.service
 
 import com.masarnovsky.popugjira.analytics.model.Transaction
-import com.masarnovsky.popugjira.analytics.model.TransactionDto
 import com.masarnovsky.popugjira.analytics.repository.TransactionRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -11,17 +10,8 @@ import java.time.LocalDate
 class TransactionService(
     private val repository: TransactionRepository,
 ) {
-    fun save(transaction: TransactionDto): Transaction {
-        return repository.save(
-            Transaction(
-                accountPublicId = transaction.accountPublicId,
-                taskPublicId = transaction.taskPublicId,
-                credit = transaction.credit,
-                debt = transaction.debt,
-                type = transaction.type,
-                createdAt = transaction.createdAt
-            )
-        )
+    fun save(transaction: Transaction): Transaction {
+        return repository.save(transaction)
     }
 
     fun calculateEarnedByManagers(): BigDecimal {

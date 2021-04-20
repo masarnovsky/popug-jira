@@ -4,11 +4,11 @@ import com.masarnovsky.popugjira.accounting.CLOSED_TASK_COEFFICIENT
 import com.masarnovsky.popugjira.accounting.PAYOUT_CREATED
 import com.masarnovsky.popugjira.accounting.SERVICE_NAME
 import com.masarnovsky.popugjira.accounting.TRANSACTION_CREATED
-import com.masarnovsky.popugjira.accounting.event.Event
-import com.masarnovsky.popugjira.accounting.event.PayoutCreated
-import com.masarnovsky.popugjira.accounting.event.TransactionCreated
-import com.masarnovsky.popugjira.accounting.model.*
+import com.masarnovsky.popugjira.accounting.model.Transaction
+import com.masarnovsky.popugjira.accounting.model.TransactionType
+import com.masarnovsky.popugjira.accounting.model.toTransactionDto
 import com.masarnovsky.popugjira.accounting.repository.TransactionRepository
+import com.masarnovsky.popugjira.event.*
 import mu.KotlinLogging
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
@@ -27,7 +27,7 @@ class TransactionService(
 ) {
 
     @Transactional
-    fun creditFunds(taskAssigned: TaskAssigned): Transaction {
+    fun creditFunds(taskAssigned: TaskAssignedDto): Transaction {
         val task = tasksService.findByPublicId(taskAssigned.taskPublicId)
         val account = accountService.findByPublicId(taskAssigned.accountPublicId)
 
@@ -43,7 +43,7 @@ class TransactionService(
             )
         )
 
-        val event = TransactionCreated(SERVICE_NAME, transaction)
+        val event = TransactionCreatedEvent(SERVICE_NAME, transaction.toTransactionDto())
         kafkaTemplate.send(TRANSACTION_CREATED, event)
         LOGGER.info { "${event.name} was produced in ${event.service} => ${event.transaction}" }
 
@@ -51,7 +51,7 @@ class TransactionService(
     }
 
     @Transactional
-    fun debtFunds(taskClosed: TaskClosed): Transaction {
+    fun debtFunds(taskClosed: TaskClosedDto): Transaction {
         val task = tasksService.findByPublicId(taskClosed.taskPublicId)
         val account = accountService.findByPublicId(taskClosed.accountPublicId)
 
@@ -68,7 +68,7 @@ class TransactionService(
             )
         )
 
-        val event = TransactionCreated(SERVICE_NAME, transaction)
+        val event = TransactionCreatedEvent(SERVICE_NAME, transaction.toTransactionDto())
         kafkaTemplate.send(TRANSACTION_CREATED, event)
         LOGGER.info { "${event.name} was produced in ${event.service} => ${event.transaction}" }
 
@@ -88,7 +88,7 @@ class TransactionService(
                 )
             )
 
-            val event = PayoutCreated(SERVICE_NAME, PayoutDto(account.publicId, account.walletAmount))
+            val event = PayoutCreatedEvent(SERVICE_NAME, PayoutDto(account.publicId, account.walletAmount))
             kafkaTemplate.send(PAYOUT_CREATED, event)
             account.walletAmount = BigDecimal.ZERO
             accountService.save(account)

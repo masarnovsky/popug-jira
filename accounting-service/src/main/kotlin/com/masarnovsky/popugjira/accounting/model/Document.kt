@@ -1,5 +1,8 @@
 package com.masarnovsky.popugjira.accounting.model
 
+import com.masarnovsky.popugjira.event.AccountDto
+import com.masarnovsky.popugjira.event.TaskCreatedDto
+import com.masarnovsky.popugjira.event.TransactionDto
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
@@ -41,7 +44,7 @@ data class Task(
     var description: String,
     var status: Status = Status.OPEN,
     var account: Account? = null,
-    val price: BigDecimal,
+    var price: BigDecimal = BigDecimal.ZERO,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 )
@@ -57,3 +60,30 @@ enum class Role {
 enum class TransactionType {
     DEBT, CREDIT, PAYOUT
 }
+
+fun TaskCreatedDto.toTask() = Task(
+    publicId = publicId,
+    title = title,
+    description = description,
+    status = Status.valueOf(status),
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+fun Transaction.toTransactionDto() = TransactionDto(
+    accountPublicId = accountPublicId,
+    taskPublicId = taskPublicId,
+    credit = credit,
+    debt = debt,
+    type = type.name,
+    createdAt = createdAt,
+)
+
+fun AccountDto.toAccount() = Account(
+    publicId = publicId,
+    username = username,
+    email = email,
+    roles = roles.map { Role.valueOf(it) },
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)

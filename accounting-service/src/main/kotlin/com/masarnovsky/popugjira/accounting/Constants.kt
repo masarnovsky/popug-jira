@@ -3,8 +3,6 @@ package com.masarnovsky.popugjira.accounting
 const val SERVICE_NAME = "accounting-service"
 const val ACCOUNTING_GROUP_ID = "accounting"
 
-const val TASKS_GROUP_ID = "tasks"
-const val TASK_CREATED_TOPIC = "task-created"
 const val TASK_ASSIGNED_TOPIC = "task-assigned"
 const val TASK_CLOSED_TOPIC = "task-closed"
 const val TASKS_STREAM_TOPIC = "tasks-stream"

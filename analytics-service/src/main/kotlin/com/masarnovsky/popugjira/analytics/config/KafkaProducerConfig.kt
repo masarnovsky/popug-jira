@@ -1,6 +1,6 @@
 package com.masarnovsky.popugjira.analytics.config
 
-import com.masarnovsky.popugjira.analytics.event.Event
+import com.masarnovsky.popugjira.event.Event
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer

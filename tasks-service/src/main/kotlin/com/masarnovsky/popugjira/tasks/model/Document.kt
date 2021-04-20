@@ -1,22 +1,12 @@
-package com.masarnovsky.popugjira.analytics.model
+package com.masarnovsky.popugjira.tasks.model
 
+import com.masarnovsky.popugjira.event.AccountDto
+import com.masarnovsky.popugjira.event.TaskCreatedDto
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import java.math.BigDecimal
 import java.time.LocalDateTime
-
-@Document
-data class Transaction(
-    @Id
-    val id: ObjectId = ObjectId.get(),
-    val accountPublicId: String,
-    val taskPublicId: String? = null,
-    val credit: BigDecimal = BigDecimal.ZERO,
-    val debt: BigDecimal = BigDecimal.ZERO,
-    val type: TransactionType,
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-)
+import java.util.*
 
 @Document
 data class Account(
@@ -26,8 +16,6 @@ data class Account(
     val username: String,
     val email: String,
     var roles: List<Role>,
-    var walletAmount: BigDecimal = BigDecimal.ZERO,
-    var calculatedAt: LocalDateTime = LocalDateTime.now(),
     val createdAt: LocalDateTime,
     var updatedAt: LocalDateTime,
 )
@@ -36,12 +24,11 @@ data class Account(
 data class Task(
     @Id
     val id: ObjectId = ObjectId.get(),
-    val publicId: String,
+    val publicId: String = UUID.randomUUID().toString(),
     var title: String,
     var description: String,
     var status: Status = Status.OPEN,
     var account: Account? = null,
-    val price: BigDecimal,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 )
@@ -54,6 +41,20 @@ enum class Role {
     EMPLOYEE, MANAGER, ADMIN, ACCOUNTANT
 }
 
-enum class TransactionType {
-    DEBT, CREDIT, PAYOUT
-}
+fun Task.toTaskCreatedDto() = TaskCreatedDto(
+    publicId = publicId,
+    title = title,
+    description = description,
+    status = status.name,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+fun AccountDto.toAccount() = Account(
+    publicId = publicId,
+    username = username,
+    email = email,
+    roles = roles.map { Role.valueOf(it) },
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)

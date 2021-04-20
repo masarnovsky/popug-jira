@@ -1,11 +1,13 @@
 package com.masarnovsky.popugjira.accounting.listener
 
 import com.masarnovsky.popugjira.accounting.*
-import com.masarnovsky.popugjira.accounting.event.*
+import com.masarnovsky.popugjira.accounting.model.toAccount
+import com.masarnovsky.popugjira.accounting.model.toTask
 import com.masarnovsky.popugjira.accounting.service.AccountService
 import com.masarnovsky.popugjira.accounting.service.NotificationService
 import com.masarnovsky.popugjira.accounting.service.TasksService
 import com.masarnovsky.popugjira.accounting.service.TransactionService
+import com.masarnovsky.popugjira.event.*
 import mu.KotlinLogging
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
@@ -27,7 +29,7 @@ class KafkaListener(
     )
     fun listenAccountsStreamTopic(event: AccountCreatedEvent) {
         LOGGER.info { "=> event ${event.name} was consumed from ${event.service} with data: ${event.account}" }
-        accountService.save(event.account)
+        accountService.save(event.account.toAccount())
     }
 
     @KafkaListener(
@@ -36,7 +38,7 @@ class KafkaListener(
     )
     fun listenTaskCreatedTopic(event: TaskCreatedEvent) {
         LOGGER.info { "=> event ${event.name} was consumed from ${event.service} with data: ${event.task}" }
-        tasksService.setPriceAndSave(event.task)
+        tasksService.setPriceAndSave(event.task.toTask())
     }
 
     @KafkaListener(
@@ -61,7 +63,7 @@ class KafkaListener(
         topics = [PAYOUT_CREATED],
         containerFactory = "kafkaPayoutCreatedEventListenerContainerFactory"
     )
-    fun listenPayoutCreatedTopic(event: PayoutCreated) {
+    fun listenPayoutCreatedTopic(event: PayoutCreatedEvent) {
         LOGGER.info { "=> event ${event.name} was consumed from ${event.service} with data: ${event.payout}" }
         notificationService.sendNotification(event.payout.accountPublicId, "Hi, we sent you ${event.payout.funds}$!")
     }

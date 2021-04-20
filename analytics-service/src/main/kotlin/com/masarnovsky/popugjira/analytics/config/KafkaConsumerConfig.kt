@@ -1,15 +1,14 @@
 package com.masarnovsky.popugjira.analytics.config
 
 import com.masarnovsky.popugjira.analytics.ACCOUNTING_GROUP_ID
-import com.masarnovsky.popugjira.analytics.event.AccountCreatedEvent
-import com.masarnovsky.popugjira.analytics.event.TransactionCreatedEvent
+import com.masarnovsky.popugjira.event.AccountCreatedEvent
+import com.masarnovsky.popugjira.event.TransactionCreatedEvent
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
-import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
@@ -58,6 +57,14 @@ class KafkaConsumerConfig {
             StringDeserializer(),
             JsonDeserializer(TransactionCreatedEvent::class.java, false)
         )
+    }
+
+    @Bean
+    fun kafkaTransactionCreatedEventListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, TransactionCreatedEvent> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, TransactionCreatedEvent>()
+        factory.consumerFactory = transactionCreatedConsumerFactory()
+
+        return factory
     }
 
 }

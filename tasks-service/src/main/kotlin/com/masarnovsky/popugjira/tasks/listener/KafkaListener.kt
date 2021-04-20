@@ -6,8 +6,8 @@ import com.masarnovsky.popugjira.tasks.model.toAccount
 import com.masarnovsky.popugjira.tasks.service.AccountService
 import com.masarnovsky.popugjira.tasks.service.NotificationService
 import com.masarnovsky.popugjira.tasks.service.TaskService
-import main.kotlin.com.masarnovsky.popugjira.event.AccountCreatedEvent
-import main.kotlin.com.masarnovsky.popugjira.event.TaskAssignedEvent
+import com.masarnovsky.popugjira.event.AccountCreatedEvent
+import com.masarnovsky.popugjira.event.TaskAssignedEvent
 import mu.KotlinLogging
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
