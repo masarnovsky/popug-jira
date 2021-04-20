@@ -1,4 +1,4 @@
-package main.kotlin.com.masarnovsky.popugjira.event
+package com.masarnovsky.popugjira.event
 
 open class Event(val name: String, val service: String)
 

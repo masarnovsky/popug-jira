@@ -1,4 +1,4 @@
-package main.kotlin.com.masarnovsky.popugjira.event
+package com.masarnovsky.popugjira.event
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.math.BigDecimal
