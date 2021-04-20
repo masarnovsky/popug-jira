@@ -10,7 +10,7 @@ class NotificationService(
     private val accountService: AccountService,
 ) {
 
-    fun sendNotification(publicId: String, message:String) {
+    fun sendNotification(publicId: String, message: String) {
         val account = accountService.findByPublicId(publicId)
         LOGGER.info { "to: ${account.email}. Hi ${account.username}, $message" }
     }

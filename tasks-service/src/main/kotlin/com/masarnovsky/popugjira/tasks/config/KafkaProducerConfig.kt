@@ -1,6 +1,6 @@
 package com.masarnovsky.popugjira.tasks.config
 
-import com.masarnovsky.popugjira.tasks.event.Event
+import main.kotlin.com.masarnovsky.popugjira.event.Event
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer

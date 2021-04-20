@@ -1,8 +1,8 @@
 package com.masarnovsky.popugjira.tasks.config
 
 import com.masarnovsky.popugjira.tasks.TASKS_GROUP_ID
-import com.masarnovsky.popugjira.tasks.event.AccountCreatedEvent
-import com.masarnovsky.popugjira.tasks.event.TaskAssignedEvent
+import main.kotlin.com.masarnovsky.popugjira.event.AccountCreatedEvent
+import main.kotlin.com.masarnovsky.popugjira.event.TaskAssignedEvent
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value

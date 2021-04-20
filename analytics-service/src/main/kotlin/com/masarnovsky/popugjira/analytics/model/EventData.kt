@@ -1,8 +1,6 @@
 package com.masarnovsky.popugjira.analytics.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import org.bson.types.ObjectId
-import org.springframework.data.annotation.Id
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
